@@ -31,6 +31,7 @@ spec:
                 sleep 2
               done
               psql -h inventory-postgres -U postgres -d wms -c 'CREATE SCHEMA IF NOT EXISTS inventory;'
+              psql -h inventory-postgres -U postgres -d wms -c 'ALTER DATABASE wms SET search_path TO inventory, public;'
       containers:
         - name: inventory-app
           image: 10.96.191.117:8082/inventory-app:proto-1
@@ -43,7 +44,7 @@ spec:
             - name: DEPLOY_ENV
               value: proto
             - name: DB_URL
-              value: jdbc:postgresql://inventory-postgres:5432/wms?currentSchema=inventory,public,camunda
+              value: jdbc:postgresql://inventory-postgres:5432/wms
             - name: DB_USER
               value: postgres
             - name: DB_PASSWORD
