@@ -13,9 +13,11 @@ spec:
       labels:
         app: front-store-app
     spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
       containers:
         - name: front-store-app
-          image: local/front-store-app:proto-1
+          image: 10.96.191.117:8082/front-store-app:proto-nexus-2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
