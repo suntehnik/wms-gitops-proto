@@ -17,7 +17,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: front-store-app
-          image: 10.96.191.117:8082/front-store-app:proto-nexus-2
+          image: 10.96.191.117:8082/front-store-app:jenkins-12
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
