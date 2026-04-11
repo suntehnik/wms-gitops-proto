@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: resource-app
-          image: 10.96.191.117:8082/resource-app:proto-1
+          image: 10.96.191.117:8082/resource-app:jenkins-12
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8140
