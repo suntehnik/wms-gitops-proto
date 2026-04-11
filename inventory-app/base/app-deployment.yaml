@@ -31,7 +31,6 @@ spec:
                 sleep 2
               done
               psql -h inventory-postgres -U postgres -d wms -c 'CREATE SCHEMA IF NOT EXISTS inventory;'
-              psql -h inventory-postgres -U postgres -d wms -c 'CREATE SCHEMA IF NOT EXISTS camunda;'
       containers:
         - name: inventory-app
           image: 10.96.191.117:8082/inventory-app:proto-1
