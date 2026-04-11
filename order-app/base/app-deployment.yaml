@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       initContainers:
         - name: init-db-schemas
-          image: postgres:12.6
+          image: 10.96.191.117:8082/order-app:jenkins-2
           env:
             - name: PGPASSWORD
               value: postgres
@@ -33,7 +33,7 @@ spec:
               psql -h order-postgres -U postgres -d om -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
       containers:
         - name: order-app
-          image: 10.96.191.117:8082/order-app:proto-1
+          image: 10.96.191.117:8082/order-app:jenkins-2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8160
