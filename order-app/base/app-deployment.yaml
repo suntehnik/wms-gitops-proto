@@ -64,5 +64,5 @@ spec:
             httpGet:
               path: /api/order/actuator/health/liveness
               port: 8160
-            initialDelaySeconds: 60
+            initialDelaySeconds: 240
             periodSeconds: 10
