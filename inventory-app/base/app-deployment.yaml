@@ -42,7 +42,7 @@ spec:
             - name: DEPLOY_ENV
               value: proto
             - name: DB_URL
-              value: jdbc:postgresql://inventory-postgres:5432/wms
+              value: jdbc:postgresql://inventory-postgres:5432/wms?currentSchema=inventory,public,camunda
             - name: DB_USER
               value: postgres
             - name: DB_PASSWORD
