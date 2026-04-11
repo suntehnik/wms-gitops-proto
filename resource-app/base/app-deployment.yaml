@@ -36,6 +36,8 @@ spec:
               value: postgres
             - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               value: resource-kafka:9094
+            - name: APP_HAZELCAST_NETWORK_CLUSTER_MEMBERS_0
+              value: resource-hazelcast:5701
             - name: SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES
               value: resource-elasticsearch:9300
             - name: SPRING_DATA_ELASTICSEARCH_CLUSTER_NAME
