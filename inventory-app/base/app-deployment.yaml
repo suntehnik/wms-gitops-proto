@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       initContainers:
         - name: init-db-schemas
-          image: postgres:12.8
+          image: 10.96.191.117:8082/inventory-app:jenkins-4
           env:
             - name: PGPASSWORD
               value: postgres
@@ -34,7 +34,7 @@ spec:
               psql -h inventory-postgres -U postgres -d wms -c 'ALTER DATABASE wms SET search_path TO inventory, public;'
       containers:
         - name: inventory-app
-          image: 10.96.191.117:8082/inventory-app:proto-1
+          image: 10.96.191.117:8082/inventory-app:jenkins-4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
