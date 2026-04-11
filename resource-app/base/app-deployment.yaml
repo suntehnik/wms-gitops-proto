@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: resource-app
+  template:
+    metadata:
+      labels:
+        app: resource-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      containers:
+        - name: resource-app
+          image: 10.96.191.117:8082/resource-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8140
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://resource-postgres:5432/resource-db
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: resource-kafka:9094
+            - name: SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES
+              value: resource-elasticsearch:9300
+            - name: SPRING_DATA_ELASTICSEARCH_CLUSTER_NAME
+              value: docker-cluster
+            - name: SPRING_ELASTICSEARCH_REST_URIS
+              value: resource-elasticsearch:9200
+            - name: SERVER_PORT
+              value: "8140"
+          readinessProbe:
+            httpGet:
+              path: /api/resource/actuator/health/readiness
+              port: 8140
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/resource/actuator/health/liveness
+              port: 8140
+            initialDelaySeconds: 180
+            periodSeconds: 10

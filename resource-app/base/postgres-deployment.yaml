@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-postgres
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-postgres
+  template:
+    metadata:
+      labels:
+        app: resource-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.6
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: resource-db
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres

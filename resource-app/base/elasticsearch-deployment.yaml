@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-elasticsearch
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-elasticsearch
+  template:
+    metadata:
+      labels:
+        app: resource-elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:6.8.5
+          ports:
+            - containerPort: 9200
+            - containerPort: 9300
+          env:
+            - name: cluster.name
+              value: docker-cluster
+            - name: discovery.type
+              value: single-node
+            - name: bootstrap.memory_lock
+              value: "false"
+            - name: ES_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+            - name: xpack.security.enabled
+              value: "false"
