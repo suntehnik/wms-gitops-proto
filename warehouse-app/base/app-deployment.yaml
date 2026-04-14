@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       initContainers:
         - name: init-db-schemas
-          image: 10.96.191.117:8082/warehouse-app:jenkins-12
+          image: 10.96.191.117:8082/warehouse-app:jenkins-13
           env:
             - name: PGPASSWORD
               value: postgres
@@ -34,7 +34,7 @@ spec:
               psql -h warehouse-postgres -U postgres -d warehouse -c 'CREATE EXTENSION IF NOT EXISTS ltree;'
       containers:
         - name: warehouse-app
-          image: 10.96.191.117:8082/warehouse-app:jenkins-12
+          image: 10.96.191.117:8082/warehouse-app:jenkins-13
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
