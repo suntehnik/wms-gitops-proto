@@ -37,19 +37,4 @@ data:
     EOSQL
     done
 
-    # --- Extensions for warehouse DB (ltree, pg_partman) ---
-    echo "=== Setting up extensions for warehouse DB ==="
-    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "warehouse" <<-EOSQL
-      CREATE EXTENSION IF NOT EXISTS ltree;
-      CREATE SCHEMA IF NOT EXISTS partman;
-      CREATE EXTENSION IF NOT EXISTS pg_partman SCHEMA partman;
-    EOSQL
-
-    # --- pg_partman background worker ---
-    echo "ADDING pg_partman_bgw TO postgresql.conf"
-    echo "shared_preload_libraries = 'pg_partman_bgw'" >> "$PGDATA/postgresql.conf"
-    echo "pg_partman_bgw.interval = 3600" >> "$PGDATA/postgresql.conf"
-    echo "pg_partman_bgw.role = '$POSTGRES_USER'" >> "$PGDATA/postgresql.conf"
-    echo "pg_partman_bgw.dbname = warehouse" >> "$PGDATA/postgresql.conf"
-
     echo "=== All databases created ==="
