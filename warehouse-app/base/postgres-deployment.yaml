@@ -13,15 +13,26 @@ spec:
       labels:
         app: warehouse-postgres
     spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      volumes:
+        - name: init-databases
+          configMap:
+            name: warehouse-postgres-init
+            defaultMode: 0755
       containers:
         - name: postgres
-          image: postgres:12.6
+          image: mfomichev/postgres:12.8-alpine-partman
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: om
+              value: warehouse
             - name: POSTGRES_USER
               value: postgres
             - name: POSTGRES_PASSWORD
               value: postgres
+          volumeMounts:
+            - name: init-databases
+              mountPath: /docker-entrypoint-initdb.d/01-init-databases.sh
+              subPath: 01-init-databases.sh
