@@ -27,6 +27,8 @@ spec:
             - sh
             - -c
             - |
+              psql -h warehouse-postgres -U postgres -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'warehouse'" | grep -q 1 || \
+              psql -h warehouse-postgres -U postgres -d postgres -c 'CREATE DATABASE warehouse;'
               until pg_isready -h warehouse-postgres -p 5432 -U postgres; do
                 sleep 2
               done
@@ -34,7 +36,7 @@ spec:
               psql -h warehouse-postgres -U postgres -d warehouse -c 'CREATE EXTENSION IF NOT EXISTS ltree;'
       containers:
         - name: warehouse-app
-          image: 10.96.191.117:8082/warehouse-app:jenkins-17
+          image: 10.96.191.117:8082/warehouse-app:jenkins-18
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
