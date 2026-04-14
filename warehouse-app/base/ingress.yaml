@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: warehouse-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/warehouse
+            pathType: Prefix
+            backend:
+              service:
+                name: warehouse-app
+                port:
+                  number: 8081

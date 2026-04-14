@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warehouseapp-hazelcast
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouseapp-hazelcast
+  template:
+    metadata:
+      labels:
+        app: warehouseapp-hazelcast
+    spec:
+      containers:
+        - name: hazelcast
+          image: hazelcast/hazelcast:5.1.1
+          ports:
+            - containerPort: 5701
+          env:
+            - name: HZ_CLUSTERNAME
+              value: default
+            - name: JAVA_OPTS
+              value: "-Dhazelcast.local.localAddress=0.0.0.0"
