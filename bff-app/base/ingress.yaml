@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bff-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/bff
+            pathType: Prefix
+            backend:
+              service:
+                name: bff-app
+                port:
+                  number: 3030
