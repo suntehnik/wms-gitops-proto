@@ -34,7 +34,7 @@ spec:
               psql -h audit-postgres -U postgres -d wms -c 'ALTER DATABASE wms SET search_path TO audit, public;'
       containers:
         - name: audit-app
-          image: 10.96.191.117:8082/audit-app:jenkins-19
+          image: 10.96.191.117:8082/audit-app:jenkins-20
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8085
