@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quality-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: quality-app
+  template:
+    metadata:
+      labels:
+        app: quality-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-schemas
+          image: postgres:12.8
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h quality-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h quality-postgres -U postgres -d quality -c 'CREATE SCHEMA IF NOT EXISTS quality;'
+              psql -h quality-postgres -U postgres -d quality -c 'ALTER DATABASE quality SET search_path TO quality, public;'
+      containers:
+        - name: quality-app
+          image: 10.96.191.117:8082/quality-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8145
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://quality-postgres:5432/quality
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "quality-kafka:9094"
+            - name: RM_REST_URI
+              value: "http://resource-app:8140/api/resource"
+            - name: PIM_REST_URI
+              value: "http://pim-app:8095/api/pim"
+            - name: SERVER_PORT
+              value: "8145"
+          readinessProbe:
+            httpGet:
+              path: /api/quality/actuator/health/readiness
+              port: 8145
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/quality/actuator/health/liveness
+              port: 8145
+            initialDelaySeconds: 180
+            periodSeconds: 10

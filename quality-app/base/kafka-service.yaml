@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: quality-kafka
+  namespace: wms-proto
+spec:
+  selector:
+    app: quality-kafka
+  ports:
+    - port: 9094
+      targetPort: 9094

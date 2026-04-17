@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mechanization-manager-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mechanization-manager-app
+  template:
+    metadata:
+      labels:
+        app: mechanization-manager-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      containers:
+        - name: mechanization-manager-app
+          image: 10.96.191.117:8082/mechanization-manager-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://postgres:5432/wms
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "mechanization-manager-kafka:9094"
+        - name: APP_PLC_URL
+          value: "http://mechanization-manager-plc:1234"
+            - name: SERVER_PORT
+              value: "8080"
+          readinessProbe:
+            httpGet:
+              path: /api/mechanization-manager/actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/mechanization-manager/actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 180
+            periodSeconds: 10

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yard-hazelcast
+  namespace: wms-proto
+spec:
+  selector:
+    app: yard-hazelcast
+  ports:
+    - port: 5701
+      targetPort: 5701

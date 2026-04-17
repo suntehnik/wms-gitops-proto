@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: logwatch-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/logwatch
+            pathType: Prefix
+            backend:
+              service:
+                name: logwatch-app
+                port:
+                  number: 8080

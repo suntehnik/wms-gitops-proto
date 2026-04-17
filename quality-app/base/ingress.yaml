@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: quality-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/quality
+            pathType: Prefix
+            backend:
+              service:
+                name: quality-app
+                port:
+                  number: 8145

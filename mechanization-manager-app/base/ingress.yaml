@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mechanization-manager-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/mechanization-manager
+            pathType: Prefix
+            backend:
+              service:
+                name: mechanization-manager-app
+                port:
+                  number: 8080

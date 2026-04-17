@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sap-integration-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: sap-integration-app
+  template:
+    metadata:
+      labels:
+        app: sap-integration-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      containers:
+        - name: sap-integration-app
+          image: 10.96.191.117:8082/sap-integration-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://postgres:5432/sapintegrationapp
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "sap-kafka:9094"
+        - name: INBOUND_REST_URI
+          value: "http://inbound-app:8130"
+        - name: WAREHOUSE_REST_URI
+          value: "http://warehouse-app:8081"
+            - name: SERVER_PORT
+              value: "8080"
+          readinessProbe:
+            httpGet:
+              path: /api/sap-integration/actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/sap-integration/actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 180
+            periodSeconds: 10
