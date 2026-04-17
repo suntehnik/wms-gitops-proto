@@ -34,7 +34,7 @@ spec:
               psql -h pim-postgres -U postgres -d pim -c 'ALTER DATABASE pim SET search_path TO public;'
       containers:
         - name: pim-app
-          image: 10.96.191.117:8082/pim-app:jenkins-3
+          image: 10.96.191.117:8082/pim-app:jenkins-4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8095
