@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: bff-app
-          image: 10.96.191.117:8082/bff-app:jenkins-21
+          image: 10.96.191.117:8082/bff-app:jenkins-22
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3030
@@ -42,13 +42,13 @@ spec:
               value: http://pim-app:8095
           readinessProbe:
             httpGet:
-              path: /
+              path: /api/bff
               port: 3030
             initialDelaySeconds: 60
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /
+              path: /api/bff
               port: 3030
             initialDelaySeconds: 90
             periodSeconds: 10
