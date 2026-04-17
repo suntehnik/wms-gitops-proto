@@ -34,7 +34,7 @@ spec:
               psql -h inbound-postgres -U postgres -d inbound -c 'ALTER DATABASE inbound SET search_path TO inbound, public;'
       containers:
         - name: inbound-app
-          image: 10.96.191.117:8082/inbound-app:jenkins-19
+          image: 10.96.191.117:8082/inbound-app:jenkins-20
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8130
