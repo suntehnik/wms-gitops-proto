@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inbound-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: inbound-app
+  template:
+    metadata:
+      labels:
+        app: inbound-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-schemas
+          image: postgres:12.8
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h inbound-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h inbound-postgres -U postgres -d inbound -c 'CREATE SCHEMA IF NOT EXISTS inbound;'
+              psql -h inbound-postgres -U postgres -d inbound -c 'ALTER DATABASE inbound SET search_path TO inbound, public;'
+      containers:
+        - name: inbound-app
+          image: 10.96.191.117:8082/inbound-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8130
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://inbound-postgres:5432/inbound
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: inbound-kafka:9094
+            - name: WAREHOUSE_REST_URI
+              value: http://warehouse-app:8081/api/warehouse
+            - name: RM_REST_URI
+              value: http://resource-app:8140/api/resource
+            - name: TRANSFER_REST_URI
+              value: http://transfer-app:8180/api/transfer
+            - name: SERVER_PORT
+              value: "8130"
+          readinessProbe:
+            httpGet:
+              path: /api/inbound/actuator/health/readiness
+              port: 8130
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/inbound/actuator/health/liveness
+              port: 8130
+            initialDelaySeconds: 180
+            periodSeconds: 10
