@@ -34,7 +34,7 @@ spec:
               psql -h manufacturing-postgres -U postgres -d manufacturing -c 'ALTER DATABASE manufacturing SET search_path TO manufacturing, public;'
       containers:
         - name: manufacturing-app
-          image: 10.96.191.117:8082/manufacturing-app:proto-1
+          image: 10.96.191.117:8082/manufacturing-app:jenkins-2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8150
