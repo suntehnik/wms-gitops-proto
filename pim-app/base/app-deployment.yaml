@@ -30,8 +30,8 @@ spec:
               until pg_isready -h pim-postgres -p 5432 -U postgres; do
                 sleep 2
               done
-              psql -h pim-postgres -U postgres -d pim -c 'CREATE SCHEMA IF NOT EXISTS pim;'
-              psql -h pim-postgres -U postgres -d pim -c 'ALTER DATABASE pim SET search_path TO pim, public;'
+              # Pim migrations expect fresh objects in the default public schema.
+              psql -h pim-postgres -U postgres -d pim -c 'ALTER DATABASE pim SET search_path TO public;'
       containers:
         - name: pim-app
           image: 10.96.191.117:8082/pim-app:jenkins-3
