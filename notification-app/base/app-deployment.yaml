@@ -26,6 +26,8 @@ spec:
               value: local
             - name: DEPLOY_ENV
               value: proto
+            - name: APPLICATION_NOTIFICATION_FROMEMAIL
+              value: wms-noreply@wms.local
             - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               value: notification-kafka:9094
             - name: SERVER_PORT
