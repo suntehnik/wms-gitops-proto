@@ -17,7 +17,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: notification-app
-          image: 10.96.191.117:8082/notification-app:proto-1
+          image: 10.96.191.117:8082/notification-app:jenkins-2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
