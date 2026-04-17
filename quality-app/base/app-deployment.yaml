@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       initContainers:
         - name: init-db-schemas
-          image: postgres:12.8
+          image: 10.96.191.117:8082/quality-app:jenkins-6
           env:
             - name: PGPASSWORD
               value: postgres
@@ -34,7 +34,7 @@ spec:
               psql -h quality-postgres -U postgres -d quality -c 'ALTER DATABASE quality SET search_path TO quality, public;'
       containers:
         - name: quality-app
-          image: 10.96.191.117:8082/quality-app:proto-1
+          image: 10.96.191.117:8082/quality-app:jenkins-6
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8145
