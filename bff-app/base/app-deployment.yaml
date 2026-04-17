@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: bff-app
-          image: 10.96.191.117:8082/bff-app:jenkins-20
+          image: 10.96.191.117:8082/bff-app:jenkins-21
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3030
