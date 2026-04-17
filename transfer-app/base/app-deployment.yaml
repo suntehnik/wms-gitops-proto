@@ -34,7 +34,7 @@ spec:
               psql -h transfer-postgres -U postgres -d transfer -c 'ALTER DATABASE transfer SET search_path TO transfer, public;'
       containers:
         - name: transfer-app
-          image: 10.96.191.117:8082/transfer-app:proto-1
+          image: 10.96.191.117:8082/transfer-app:jenkins-3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8180
