@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notification-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/notification
+            pathType: Prefix
+            backend:
+              service:
+                name: notification-app
+                port:
+                  number: 8080

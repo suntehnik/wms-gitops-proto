@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manufacturing-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: manufacturing-app
+  template:
+    metadata:
+      labels:
+        app: manufacturing-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-schemas
+          image: postgres:12.8
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h manufacturing-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h manufacturing-postgres -U postgres -d manufacturing -c 'CREATE SCHEMA IF NOT EXISTS manufacturing;'
+              psql -h manufacturing-postgres -U postgres -d manufacturing -c 'ALTER DATABASE manufacturing SET search_path TO manufacturing, public;'
+      containers:
+        - name: manufacturing-app
+          image: 10.96.191.117:8082/manufacturing-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8150
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://manufacturing-postgres:5432/manufacturing
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "manufacturing-kafka:9094"
+            - name: WAREHOUSE_REST_URI
+              value: "http://warehouse-app:8081/api/warehouse"
+            - name: PIM_REST_URI
+              value: "http://pim-app:8095/api/pim"
+            - name: SERVER_PORT
+              value: "8150"
+          readinessProbe:
+            httpGet:
+              path: /api/manufacturing/actuator/health/readiness
+              port: 8150
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/manufacturing/actuator/health/liveness
+              port: 8150
+            initialDelaySeconds: 180
+            periodSeconds: 10

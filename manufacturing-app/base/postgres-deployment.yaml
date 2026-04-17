@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manufacturing-postgres
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: manufacturing-postgres
+  template:
+    metadata:
+      labels:
+        app: manufacturing-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.8
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: manufacturing
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres

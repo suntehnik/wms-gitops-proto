@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: outbound-kafka
+  namespace: wms-proto
+spec:
+  selector:
+    app: outbound-kafka
+  ports:
+    - name: kafka
+      port: 9094
+      targetPort: 9094

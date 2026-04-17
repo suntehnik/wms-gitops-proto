@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-app
+  template:
+    metadata:
+      labels:
+        app: notification-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      containers:
+        - name: notification-app
+          image: 10.96.191.117:8082/notification-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: notification-kafka:9094
+            - name: SERVER_PORT
+              value: "8080"
+          readinessProbe:
+            httpGet:
+              path: /api/notification/actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/notification/actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10

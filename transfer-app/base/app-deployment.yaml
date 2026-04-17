@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transfer-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: transfer-app
+  template:
+    metadata:
+      labels:
+        app: transfer-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-schemas
+          image: postgres:12.8
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h transfer-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h transfer-postgres -U postgres -d transfer -c 'CREATE SCHEMA IF NOT EXISTS transfer;'
+              psql -h transfer-postgres -U postgres -d transfer -c 'ALTER DATABASE transfer SET search_path TO transfer, public;'
+      containers:
+        - name: transfer-app
+          image: 10.96.191.117:8082/transfer-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8180
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://transfer-postgres:5432/transfer
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "transfer-kafka:9094"
+            - name: WAREHOUSE_REST_URI
+              value: "http://warehouse-app:8081/api/warehouse"
+            - name: RM_REST_URI
+              value: "http://resource-app:8140/api/resource"
+            - name: PIM_REST_URI
+              value: "http://pim-app:8095/api/pim"
+            - name: SERVER_PORT
+              value: "8180"
+          readinessProbe:
+            httpGet:
+              path: /api/transfer/actuator/health/readiness
+              port: 8180
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/transfer/actuator/health/liveness
+              port: 8180
+            initialDelaySeconds: 180
+            periodSeconds: 10

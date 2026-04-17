@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pim-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/pim
+            pathType: Prefix
+            backend:
+              service:
+                name: pim-app
+                port:
+                  number: 8095

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pim-postgres
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pim-postgres
+  template:
+    metadata:
+      labels:
+        app: pim-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.8
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: pim
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres

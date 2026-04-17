@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outbound-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: outbound-app
+  template:
+    metadata:
+      labels:
+        app: outbound-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-schemas
+          image: postgres:12.6
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h outbound-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h outbound-postgres -U postgres -d wms -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+      containers:
+        - name: outbound-app
+          image: 10.96.191.117:8082/outbound-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://outbound-postgres:5432/wms
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: outbound-kafka:9094
+            - name: WAREHOUSE_REST_URI
+              value: http://warehouse-app:8081/api/warehouse
+            - name: RM_REST_URI
+              value: http://resource-app:8140/api/resource
+            - name: APP_HAZELCAST_NETWORK_CLUSTER_MEMBERS_0
+              value: outbound-hazelcast:5701
+            - name: SERVER_PORT
+              value: "8080"
+          readinessProbe:
+            httpGet:
+              path: /api/outbound/actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/outbound/actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 180
+            periodSeconds: 10

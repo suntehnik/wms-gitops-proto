@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: manufacturing-postgres
+  namespace: wms-proto
+spec:
+  selector:
+    app: manufacturing-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

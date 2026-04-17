@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pim-app
+  namespace: wms-proto
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pim-app
+  template:
+    metadata:
+      labels:
+        app: pim-app
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-schemas
+          image: postgres:12.8
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h pim-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h pim-postgres -U postgres -d pim -c 'CREATE SCHEMA IF NOT EXISTS pim;'
+              psql -h pim-postgres -U postgres -d pim -c 'ALTER DATABASE pim SET search_path TO pim, public;'
+      containers:
+        - name: pim-app
+          image: 10.96.191.117:8082/pim-app:proto-1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8095
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: local
+            - name: DEPLOY_ENV
+              value: proto
+            - name: DB_URL
+              value: jdbc:postgresql://pim-postgres:5432/pim
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: APP_SECURITY_OIDC_CLIENT_ID
+              value: "wms-pim"
+            - name: APP_SECURITY_OIDC_CLIENT_SECRET
+              value: ""
+            - name: APP_SECURITY_OIDC_VERIFY_TOKEN_AUDIENCE
+              value: "false"
+            - name: SERVER_PORT
+              value: "8095"
+          readinessProbe:
+            httpGet:
+              path: /api/pim/actuator/health/readiness
+              port: 8095
+            initialDelaySeconds: 120
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/pim/actuator/health/liveness
+              port: 8095
+            initialDelaySeconds: 180
+            periodSeconds: 10

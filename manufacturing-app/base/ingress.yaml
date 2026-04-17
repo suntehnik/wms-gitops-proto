@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: manufacturing-app
+  namespace: wms-proto
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/manufacturing
+            pathType: Prefix
+            backend:
+              service:
+                name: manufacturing-app
+                port:
+                  number: 8150
