@@ -34,7 +34,7 @@ spec:
               psql -h quality-postgres -U postgres -d quality -c 'ALTER DATABASE quality SET search_path TO quality, public;'
       containers:
         - name: quality-app
-          image: 10.96.191.117:8082/quality-app:jenkins-6
+          image: nexus3.platform.svc.cluster.local:8082/quality-app:jenkins-8
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8145
