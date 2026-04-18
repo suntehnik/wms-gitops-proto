@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       initContainers:
         - name: init-db-schemas
-          image: postgres:12.8
+          image: nexus3.platform.svc.cluster.local:8082/yard-app:jenkins-2
           env:
             - name: PGPASSWORD
               value: postgres
@@ -34,7 +34,7 @@ spec:
               psql -h yard-postgres -U postgres -d yard-db -c 'ALTER DATABASE yard-db SET search_path TO yard, public;'
       containers:
         - name: yard-app
-          image: 10.96.191.117:8082/yard-app:proto-1
+          image: nexus3.platform.svc.cluster.local:8082/yard-app:jenkins-2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8155
