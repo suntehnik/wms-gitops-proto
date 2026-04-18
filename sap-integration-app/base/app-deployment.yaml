@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: sap-integration-app
-          image: nexus3.platform.svc.cluster.local:8082/sap-integration-app:jenkins-17
+          image: nexus3.platform.svc.cluster.local:8082/sap-integration-app:jenkins-18
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
