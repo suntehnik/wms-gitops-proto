@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       initContainers:
         - name: init-db-schemas
-          image: nexus3.platform.svc.cluster.local:8082/yard-app:jenkins-4
+          image: postgres:12.8
           env:
             - name: PGPASSWORD
               value: postgres
