@@ -36,7 +36,7 @@ spec:
               psql -h warehouse-postgres -U postgres -d warehouse -c 'CREATE EXTENSION IF NOT EXISTS ltree;'
       containers:
         - name: warehouse-app
-          image: 10.96.191.117:8082/warehouse-app:jenkins-26
+          image: nexus3.platform.svc.cluster.local:8082/warehouse-app:jenkins-27
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
