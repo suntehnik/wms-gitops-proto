@@ -31,7 +31,7 @@ spec:
                 sleep 2
               done
               psql -h yard-postgres -U postgres -d yard-db -c 'CREATE SCHEMA IF NOT EXISTS yard;'
-              psql -h yard-postgres -U postgres -d yard-db -c 'ALTER DATABASE yard-db SET search_path TO yard, public;'
+              psql -h yard-postgres -U postgres -d yard-db -c 'ALTER DATABASE "yard-db" SET search_path TO yard, public;'
       containers:
         - name: yard-app
           image: nexus3.platform.svc.cluster.local:8082/yard-app:jenkins-3
