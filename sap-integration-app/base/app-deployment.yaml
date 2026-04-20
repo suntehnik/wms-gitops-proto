@@ -34,7 +34,7 @@ spec:
               psql -h sap-integration-postgres -U postgres -d sapintegrationapp -c 'ALTER DATABASE sapintegrationapp SET search_path TO sap_integration, public;'
       containers:
         - name: sap-integration-app
-          image: 10.96.191.117:8082/sap-integration-app:proto-1
+          image: nexus3.platform.svc.cluster.local:8082/sap-integration-app:jenkins-19
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
