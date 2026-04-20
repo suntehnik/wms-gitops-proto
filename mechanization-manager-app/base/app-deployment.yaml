@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: mechanization-manager-app
-          image: nexus3.platform.svc.cluster.local:8082/mechanization-manager-app:jenkins-3
+          image: 10.96.191.117:8082/mechanization-manager-app:proto-1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -34,10 +34,10 @@ spec:
               value: postgres
             - name: DB_PASSWORD
               value: postgres
-        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-          value: "mechanization-manager-kafka:9094"
-        - name: APP_PLC_URL
-          value: "http://mechanization-manager-plc:1234"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "mechanization-manager-kafka:9094"
+            - name: APP_PLC_URL
+              value: "http://mechanization-manager-plc:1234"
             - name: SERVER_PORT
               value: "8080"
           readinessProbe:
