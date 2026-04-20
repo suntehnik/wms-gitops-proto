@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: logwatch-app
-          image: 10.96.191.117:8082/logwatch-app:proto-1
+          image: nexus3.platform.svc.cluster.local:8082/logwatch-app:jenkins-3
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
