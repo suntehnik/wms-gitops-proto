@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mechanization-manager-postgres
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mechanization-manager-postgres
+  template:
+    metadata:
+      labels:
+        app: mechanization-manager-postgres
+    spec:
+      imagePullSecrets:
+        - name: nexus-docker-creds
+      volumes:
+        - name: init-database
+          configMap:
+            name: mechanization-manager-postgres-init
+            defaultMode: 0755
+      containers:
+        - name: postgres
+          image: mfomichev/postgres:12.8-alpine-partman
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: wms
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          volumeMounts:
+            - name: init-database
+              mountPath: /docker-entrypoint-initdb.d

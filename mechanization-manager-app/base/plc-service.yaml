@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mechanization-manager-plc
+  namespace: wms-proto
+spec:
+  selector:
+    app: mechanization-manager-plc
+  ports:
+    - port: 1234
+      targetPort: 1080

@@ -17,9 +17,24 @@ spec:
     spec:
       imagePullSecrets:
         - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-prerequisites
+          image: postgres:12.8
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h mechanization-manager-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h mechanization-manager-postgres -U postgres -d wms -c 'CREATE SCHEMA IF NOT EXISTS partman;'
+              psql -h mechanization-manager-postgres -U postgres -d wms -c 'CREATE EXTENSION IF NOT EXISTS pg_partman SCHEMA partman;'
       containers:
         - name: mechanization-manager-app
-          image: nexus3.platform.svc.cluster.local:8082/mechanization-manager-app:jenkins-4
+          image: 10.96.191.117:8082/mechanization-manager-app:proto-1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -29,7 +44,7 @@ spec:
             - name: DEPLOY_ENV
               value: proto
             - name: DB_URL
-              value: jdbc:postgresql://postgres:5432/wms
+              value: jdbc:postgresql://mechanization-manager-postgres:5432/wms
             - name: DB_USER
               value: postgres
             - name: DB_PASSWORD

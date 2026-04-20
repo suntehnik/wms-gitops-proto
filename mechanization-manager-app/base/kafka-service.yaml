@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mechanization-manager-kafka
+  namespace: wms-proto
+spec:
+  selector:
+    app: mechanization-manager-kafka
+  ports:
+    - port: 9094
+      targetPort: 9094

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mechanization-manager-plc
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mechanization-manager-plc
+  template:
+    metadata:
+      labels:
+        app: mechanization-manager-plc
+    spec:
+      containers:
+        - name: mockserver
+          image: mockserver/mockserver:mockserver-5.11.2
+          ports:
+            - containerPort: 1080
