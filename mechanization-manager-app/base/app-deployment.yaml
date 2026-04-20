@@ -34,7 +34,7 @@ spec:
               psql -h mechanization-manager-postgres -U postgres -d wms -c 'CREATE EXTENSION IF NOT EXISTS pg_partman SCHEMA partman;'
       containers:
         - name: mechanization-manager-app
-          image: 10.96.191.117:8082/mechanization-manager-app:proto-1
+          image: nexus3.platform.svc.cluster.local:8082/mechanization-manager-app:jenkins-5
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
