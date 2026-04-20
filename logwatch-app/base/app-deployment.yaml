@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: logwatch-app
-          image: nexus3.platform.svc.cluster.local:8082/logwatch-app:jenkins-3
+          image: 10.96.191.117:8082/logwatch-app:proto-1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -34,10 +34,10 @@ spec:
               value: postgres
             - name: DB_PASSWORD
               value: postgres
-        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-          value: "logwatch-kafka:9094"
-        - name: WMS_ELASTIC_ENABLED
-          value: "false"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "logwatch-kafka:9094"
+            - name: WMS_ELASTIC_ENABLED
+              value: "false"
             - name: SERVER_PORT
               value: "8080"
           readinessProbe:
