@@ -33,7 +33,7 @@ spec:
               psql -h outbound-postgres -U postgres -d wms -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
       containers:
         - name: outbound-app
-          image: 10.96.191.117:8082/outbound-app:jenkins-3
+          image: nexus3.platform.svc.cluster.local:8082/outbound-app:jenkins-4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
