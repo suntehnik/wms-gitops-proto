@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sap-integration-postgres
+  namespace: wms-proto
+spec:
+  selector:
+    app: sap-integration-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

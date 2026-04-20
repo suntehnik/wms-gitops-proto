@@ -17,9 +17,24 @@ spec:
     spec:
       imagePullSecrets:
         - name: nexus-docker-creds
+      initContainers:
+        - name: init-db-schemas
+          image: postgres:12.8
+          env:
+            - name: PGPASSWORD
+              value: postgres
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h sap-integration-postgres -p 5432 -U postgres; do
+                sleep 2
+              done
+              psql -h sap-integration-postgres -U postgres -d sapintegrationapp -c 'CREATE SCHEMA IF NOT EXISTS sap_integration;'
+              psql -h sap-integration-postgres -U postgres -d sapintegrationapp -c 'ALTER DATABASE sapintegrationapp SET search_path TO sap_integration, public;'
       containers:
         - name: sap-integration-app
-          image: nexus3.platform.svc.cluster.local:8082/sap-integration-app:jenkins-18
+          image: 10.96.191.117:8082/sap-integration-app:proto-1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -29,17 +44,17 @@ spec:
             - name: DEPLOY_ENV
               value: proto
             - name: DB_URL
-              value: jdbc:postgresql://postgres:5432/sapintegrationapp
+              value: jdbc:postgresql://sap-integration-postgres:5432/sapintegrationapp
             - name: DB_USER
               value: postgres
             - name: DB_PASSWORD
               value: postgres
-        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-          value: "sap-kafka:9094"
-        - name: INBOUND_REST_URI
-          value: "http://inbound-app:8130"
-        - name: WAREHOUSE_REST_URI
-          value: "http://warehouse-app:8081"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: sap-integration-kafka:9094
+            - name: INBOUND_REST_URI
+              value: http://inbound-app:8130/api/inbound
+            - name: WAREHOUSE_REST_URI
+              value: http://warehouse-app:8081/api/warehouse
             - name: SERVER_PORT
               value: "8080"
           readinessProbe:

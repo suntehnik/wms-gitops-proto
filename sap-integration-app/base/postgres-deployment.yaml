@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sap-integration-postgres
+  namespace: wms-proto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sap-integration-postgres
+  template:
+    metadata:
+      labels:
+        app: sap-integration-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.8
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: sapintegrationapp
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
