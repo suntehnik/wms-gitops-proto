@@ -19,7 +19,7 @@ spec:
         - name: nexus-docker-creds
       containers:
         - name: mechanization-manager-app
-          image: 10.96.191.117:8082/mechanization-manager-app:proto-1
+          image: nexus3.platform.svc.cluster.local:8082/mechanization-manager-app:jenkins-4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
